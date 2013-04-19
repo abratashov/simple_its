@@ -1,0 +1,17 @@
+.page-header
+  %h1 Issues
+%table.table.table-striped
+  %thead
+    %tr
+      %th #
+      %th Issue
+      %th Subject
+      %th Assigned to
+  %tbody
+    - @tickets.each_with_index do |ticket, i|
+      %tr
+        %td= (i+1).to_s
+        %td= link_to (ticket.key).to_s, ticket_path(ticket)
+        %td= ticket.subject
+        %td= render_owner ticket
+= link_to t('.new', :default => t("helpers.links.new")), new_ticket_path, :class => 'btn btn-primary'
