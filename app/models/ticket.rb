@@ -13,11 +13,15 @@ class Ticket < ActiveRecord::Base
   validates_format_of :usermail, :with => /^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$/i
   #:format => {:with => /^$|^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i}
 
-  after_save { Resque.enqueue(ConfirmNotify, id) }
-  #after_save { Resque.enqueue(TicketNotify, id) }
+  #after_save { Resque.enqueue(ConfirmNotify, id) }
+  after_save { Resque.enqueue(TicketNotify, id) }
+
+  scope :get_by_subject, lambda { |s|
+    { :conditions => [" subject REGEXP ? ", s] }
+  }
 
   def self.to_save hash_ticket, department_id, body, user
-    result = false
+    result = nil
     ticket = new hash_ticket
     ticket.department_id = department_id
     ticket.confirmed = false
@@ -25,8 +29,10 @@ class Ticket < ActiveRecord::Base
     ticket.status_id = Status.default
     ticket.is_send = false
     if ticket.save
+      Resque.enqueue(ConfirmNotify, ticket.id)
       ticket.update_attributes({key: generate_key(ticket)})
-      result = true if Message.to_save body, ticket.id, user
+      message = Message.to_save body, ticket.id, user
+      result = [ticket, message]
     end
     result
   end
@@ -34,13 +40,19 @@ class Ticket < ActiveRecord::Base
   def self.to_update id, status_id, owner_id, body, user
     ticket = Ticket.find_by_id id
     if ticket && ticket.update_attributes({status_id: status_id, owner_id: owner_id})
-      Message.to_save body, ticket.id, user
-      return ticket
+      message = Message.to_save body, ticket.id, user
+      return [ticket, message]
     end
   end
 
   def confirm!
-    update_attributes({confirmed: true}) unless confirmed
+    p 'confirm!'
+    p self
+    #if !confirmed
+      p 'here------------------------'
+      update_attributes({confirmed: true})
+      #Resque.enqueue(TicketNotify, id)
+    #end
     true
   end
 
@@ -83,8 +95,6 @@ class Ticket < ActiveRecord::Base
   end
 
   def self.generate_issue_uri ticket
-    p 'ticket1111111111111111111111111'
-    p ticket
     "http://#{HOME_URL}/tickets/#{ticket.id}"
   end
 end

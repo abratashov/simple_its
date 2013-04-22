@@ -18,9 +18,16 @@
             %span.icon-bar
           %a.brand{:href => root_path} Simple Issue Tracking System
           - if current_user
+            %form.navbar-search{:action => "/tickets", :method=> 'get'}
+              %input#search.search-query{:name => "search"}/
+              %input#search-submit{:type => "submit", :value => "Search"}/
             .nav-collapse
               %ul.nav
-                -#%li= link_to 'My Tickets', tickets_path
+                %li= link_to 'My', tickets_path(:status => 'mytickets')
+                %li= link_to 'Unassigned', tickets_path(:status => 'unassigned')
+                %li= link_to 'Open', tickets_path(:status => 'open')
+                %li= link_to 'On hold', tickets_path(:status => 'hold')
+                %li= link_to 'Closed', tickets_path(:status => 'completed')
           %ul.nav.pull-right
             = render_sign_up
             %li.divider-vertical

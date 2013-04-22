@@ -8,7 +8,4 @@ module ApplicationHelper
     (current_user ? '' : "<li><a href='" + login_path + "'>Log in</a></li>").html_safe
   end
 
-  def render_confirm_uri uri
-    (current_user ? '' : "<li><a href='" + uri + "'>" + uri + "</a></li>").html_safe
-  end
 end

@@ -8,34 +8,36 @@
 %div.field
   %label.bold ID:
   = "#{@ticket.key}"
-%br
-%div.field
-  %label.bold Status:
-  = "#{@ticket.status.name}"
 
 - @ticket.messages.each do |message|
   %br
   %div.field
     %div.bold
-      = label_tag "#{message.user.name} <#{message.user.email}> :" if message.user_id
+      = label_tag "#{message.user.name}:", nil, :class => 'bold' if message.user_id
+      = label_tag "#{message.ticket.username}:", nil, :class => 'bold' unless message.user_id
     = render_message message.body
 %br
-- if current_user
-  = form_for @ticket do |f|
-    - if @ticket.errors.any?
-      .error_messages
-        %h2 Form is invalid
-        %ul
-          - for message in @ticket.errors.full_messages
-            %li= message
-    .field
-      = f.label :status
-      = status_helper
-    .field
-      = f.label 'assigned to'
-      = owner_helper
-    .field
-      = label_tag :body
-      %textarea#body.half_screen{ :name => 'body', :rows => '10'}
 
-    = f.submit 'Save', :class => 'btn btn-primary'
+= form_for @ticket do |f|
+  - if @ticket.errors.any?
+    .error_messages
+      %h2 Form is invalid
+      %ul
+        - for message in @ticket.errors.full_messages
+          %li= message
+  .field
+    = f.label :status
+    = status_helper
+  .field
+    = f.label 'assigned to'
+    = owner_helper
+  - if @message && @message.errors.any?
+    .error_messages
+      %h2 Form is invalid
+      %ul
+        - for message in @message.errors.full_messages
+          %li= message
+  .field
+    = label_tag :body
+    %textarea#body.half_screen{ :name => 'body', :rows => '10'}
+  = f.submit 'Save', :class => 'btn btn-primary'

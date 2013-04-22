@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130419100614) do
+ActiveRecord::Schema.define(:version => 20130422001746) do
 
   create_table "departments", :force => true do |t|
     t.string   "name"
@@ -25,7 +25,10 @@ ActiveRecord::Schema.define(:version => 20130419100614) do
     t.integer  "user_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.boolean  "is_send",    :null => false
   end
+
+  add_index "messages", ["body"], :name => "index_messages_on_body", :length => {"body"=>255}
 
   create_table "statuses", :force => true do |t|
     t.string   "name"
@@ -39,13 +42,16 @@ ActiveRecord::Schema.define(:version => 20130419100614) do
     t.integer  "status_id"
     t.string   "username"
     t.string   "usermail"
-    t.integer  "derartment_id"
-    t.integer  "owner"
+    t.integer  "department_id"
+    t.integer  "owner_id"
     t.boolean  "confirmed"
     t.string   "confirmation_key"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
+    t.boolean  "is_send",          :null => false
   end
+
+  add_index "tickets", ["key", "subject"], :name => "index_tickets_on_key_and_subject"
 
   create_table "users", :force => true do |t|
     t.string   "email",                        :null => false

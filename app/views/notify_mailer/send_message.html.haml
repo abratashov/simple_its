@@ -1,0 +1,14 @@
+%p
+  Issue link:
+  = @issue_uri
+
+%p
+  =@sender
+  leave message:
+
+%p
+  - @body.split("\n").each do |line|
+    = line
+    %br
+
+%p Simple Issue Tracking System

@@ -7,6 +7,12 @@
       %ul
         - for message in @ticket.errors.full_messages
           %li= message
+  - if @message && @message.errors.any?
+    .error_messages
+      %h2 Form is invalid
+      %ul
+        - for message in @message.errors.full_messages
+          %li= message
   .field
     = f.label :subject
     = f.text_field :subject

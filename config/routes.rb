@@ -7,10 +7,12 @@ SimpleIts::Application.routes.draw do
   resources :users
   resources :sessions
 
-  resources :tickets
   get 'confirm/:conf_key' => 'tickets#confirm', :as => 'confirm'
+  get 'search' => 'tickets#search', :as => 'search'
 
-  root :to => 'tickets#new'
+  resources :tickets
+
+  root :to => 'tickets#index'
   
   mount Resque::Server, :at => "/resque"
   # The priority is based upon order of creation:

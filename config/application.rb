@@ -61,5 +61,5 @@ module SimpleIts
   end
 end
 
-HOME_URL = 'localhost:3000'
+HOME_URL = 'localhost:3001'
 ADMIN_PASSWORD = 'admin'
