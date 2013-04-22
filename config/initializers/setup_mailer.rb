@@ -6,7 +6,7 @@ ActionMailer::Base.smtp_settings = {
   :port                 => 587,
   :domain               => "google.com",
   :user_name            => "phlowerteam",
-  :password             => "maguskey777",
+  :password             => "",
   :authentication       => "plain",
   :enable_starttls_auto => true
 }
